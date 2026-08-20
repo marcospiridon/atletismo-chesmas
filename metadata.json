@@ -1,0 +1,6 @@
+{
+  "name": "Atletismo Chesmas",
+  "description": "Website oficial e plataforma de gestão do clube de atletismo Chesmas, com notícias, resultados, calendário de treinos, galeria e área de administração.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
