@@ -43,11 +43,11 @@ export const Hero: React.FC<HeroProps> = ({ clubInfo, onNavigate, recentResults 
             <div className="absolute -right-16 -top-16 w-80 h-80 bg-emerald-400/20 rounded-full blur-3xl pointer-events-none"></div>
 
             <div className="relative z-10 space-y-6">
-              <div className="inline-flex items-center gap-2.5 bg-white/15 border border-white/20 text-lime-300 pl-2 pr-3.5 py-1.5 rounded-full text-xs font-black uppercase tracking-wider backdrop-blur-xs">
+              <div className="inline-flex items-center gap-3 bg-white/15 border border-white/20 text-lime-300 pl-2 pr-4 py-2 rounded-full text-xs sm:text-sm font-black uppercase tracking-wider backdrop-blur-xs">
                 <img 
                   src="/logo.png" 
                   alt="Chesmas Logo" 
-                  className="w-5 h-5 object-contain"
+                  className="w-7 h-7 object-contain"
                   referrerPolicy="no-referrer" 
                 />
                 Atletismo Chesmas • Desde {clubInfo.foundationYear}

@@ -30,8 +30,8 @@ export const Footer: React.FC<FooterProps> = ({ clubInfo, onNavigate, onOpenAdmi
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10">
           {/* Col 1: Brand & motto */}
           <div className="lg:col-span-4 space-y-4">
-            <div className="flex items-center gap-3.5">
-              <div className="w-14 h-14 rounded-2xl bg-white p-1 flex items-center justify-center shadow-xs border border-white/20 shrink-0">
+            <div className="flex items-center gap-4">
+              <div className="w-20 h-20 rounded-2xl bg-white p-1.5 flex items-center justify-center shadow-md border border-white/20 shrink-0">
                 <img 
                   src="/logo.png" 
                   alt="Logo Clube de Atletismo Chesmas" 
@@ -43,7 +43,7 @@ export const Footer: React.FC<FooterProps> = ({ clubInfo, onNavigate, onOpenAdmi
                 <span className="font-black text-lg text-white tracking-tight block">
                   CLUBE DE ATLETISMO
                 </span>
-                <span className="text-lime-300 font-black text-xl tracking-wider -mt-1 block">
+                <span className="text-lime-300 font-black text-xl sm:text-2xl tracking-wider -mt-1 block">
                   CHESMAS
                 </span>
               </div>

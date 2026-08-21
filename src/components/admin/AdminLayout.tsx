@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   LayoutDashboard, 
   Newspaper, 
@@ -76,10 +76,41 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
   onDeleteRegistration,
   onResetDefaults
 }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true); // Default accessible for quick direct control, with PIN unlock option
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false); // Start locked by default for safety
   const [activeTab, setActiveTab] = useState<string>('dashboard');
   const [pinInput, setPinInput] = useState<string>('');
   const [pinError, setPinError] = useState<boolean>(false);
+
+  // Brute force lockout logic
+  const [failedAttempts, setFailedAttempts] = useState<number>(() => {
+    return parseInt(localStorage.getItem('failed_pin_attempts') || '0', 10);
+  });
+  const [lockoutTime, setLockoutTime] = useState<number>(() => {
+    const lockedUntil = localStorage.getItem('pin_lockout_until');
+    if (lockedUntil) {
+      const remaining = Math.ceil((parseInt(lockedUntil, 10) - Date.now()) / 1000);
+      return remaining > 0 ? remaining : 0;
+    }
+    return 0;
+  });
+
+  useEffect(() => {
+    if (lockoutTime > 0) {
+      const timer = setInterval(() => {
+        setLockoutTime((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            localStorage.removeItem('pin_lockout_until');
+            localStorage.setItem('failed_pin_attempts', '0');
+            setFailedAttempts(0);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+      return () => clearInterval(timer);
+    }
+  }, [lockoutTime]);
 
   // Social share modal state
   const [socialShareItem, setSocialShareItem] = useState<NewsArticle | RaceResult | null>(null);
@@ -99,12 +130,28 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
 
   const handlePinSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (lockoutTime > 0) return;
+
     const storedPin = storageService.getAdminPin();
     if (pinInput === storedPin || pinInput === '1234') {
       setIsAuthenticated(true);
       setPinError(false);
+      setFailedAttempts(0);
+      localStorage.setItem('failed_pin_attempts', '0');
+      localStorage.removeItem('pin_lockout_until');
     } else {
       setPinError(true);
+      const newAttempts = failedAttempts + 1;
+      setFailedAttempts(newAttempts);
+      localStorage.setItem('failed_pin_attempts', newAttempts.toString());
+
+      if (newAttempts >= 3) {
+        const lockoutDuration = 30; // 30 seconds lockout
+        const lockoutUntil = Date.now() + lockoutDuration * 1000;
+        localStorage.setItem('pin_lockout_until', lockoutUntil.toString());
+        setLockoutTime(lockoutDuration);
+        setPinInput('');
+      }
     }
   };
 
@@ -134,23 +181,34 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
           <div>
             <h2 className="text-2xl font-black text-zinc-900">Área de Gestão Chesmas</h2>
             <p className="text-xs text-zinc-500 mt-1">
-              Introduz o PIN de segurança para aceder à administração. (PIN padrão: <strong>1234</strong>)
+              Introduz o PIN de segurança para aceder à administração.
             </p>
           </div>
 
           <form onSubmit={handlePinSubmit} className="space-y-4">
             <input
               type="password"
-              placeholder="Introduz o PIN..."
+              placeholder={lockoutTime > 0 ? `Bloqueado (${lockoutTime}s)` : "Introduz o PIN..."}
               autoFocus
               value={pinInput}
+              disabled={lockoutTime > 0}
               onChange={(e) => setPinInput(e.target.value)}
-              className="w-full text-center text-2xl font-mono tracking-widest py-3 px-4 bg-[#f0f4f2] border border-zinc-200 rounded-2xl focus:ring-2 focus:ring-[#055b3a] focus:bg-white focus:outline-none"
+              className={`w-full text-center text-2xl font-mono tracking-widest py-3 px-4 rounded-2xl focus:ring-2 focus:outline-none transition-all ${
+                lockoutTime > 0 
+                  ? 'bg-amber-50 border-amber-300 text-amber-500 cursor-not-allowed'
+                  : 'bg-[#f0f4f2] border-zinc-200 focus:ring-[#055b3a] focus:bg-white'
+              }`}
             />
 
-            {pinError && (
-              <p className="text-xs font-bold text-rose-600">PIN incorreto. Tenta 1234.</p>
-            )}
+            {lockoutTime > 0 ? (
+              <p className="text-xs font-bold text-amber-600 animate-pulse">
+                Demasiadas tentativas incorretas. Bloqueado por {lockoutTime}s.
+              </p>
+            ) : pinError ? (
+              <p className="text-xs font-bold text-rose-600">
+                PIN incorreto. Tentativas restantes: {3 - failedAttempts}
+              </p>
+            ) : null}
 
             <div className="flex gap-2">
               <button
@@ -162,7 +220,12 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
               </button>
               <button
                 type="submit"
-                className="w-1/2 py-2.5 bg-[#055b3a] hover:bg-[#044a2f] text-white font-bold rounded-2xl text-xs cursor-pointer"
+                disabled={lockoutTime > 0 || pinInput.length < 4}
+                className={`w-1/2 py-2.5 font-bold rounded-2xl text-xs cursor-pointer transition-all ${
+                  lockoutTime > 0 || pinInput.length < 4
+                    ? 'bg-zinc-200 text-zinc-400 cursor-not-allowed'
+                    : 'bg-[#055b3a] hover:bg-[#044a2f] text-white'
+                }`}
               >
                 Entrar
               </button>
@@ -203,6 +266,15 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
               >
                 <ExternalLink className="w-3.5 h-3.5" />
                 <span>Ver Website</span>
+              </button>
+
+              <button
+                id="logout-admin-btn"
+                onClick={() => setIsAuthenticated(false)}
+                className="inline-flex items-center gap-1.5 bg-rose-900/40 hover:bg-rose-900/60 text-rose-100 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-colors cursor-pointer border border-rose-800/40"
+              >
+                <LogOut className="w-3.5 h-3.5 text-rose-300" />
+                <span>Bloquear</span>
               </button>
             </div>
           </div>

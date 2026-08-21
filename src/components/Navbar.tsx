@@ -106,14 +106,14 @@ export const Navbar: React.FC<NavbarProps> = ({
 
       {/* Main Navbar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
+        <div className="flex items-center justify-between py-4">
           {/* Logo & Brand */}
           <button 
             id="brand-logo-btn"
             onClick={() => handleNavClick('inicio')}
-            className="flex items-center gap-3.5 text-left group cursor-pointer focus:outline-none"
+            className="flex items-center gap-4 text-left group cursor-pointer focus:outline-none"
           >
-            <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-white p-1 flex items-center justify-center shadow-xs border border-emerald-950/10 group-hover:scale-105 transition-transform shrink-0">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-white p-1.5 flex items-center justify-center shadow-md border border-emerald-950/10 group-hover:scale-105 transition-transform shrink-0">
               <img 
                 src="/logo.png" 
                 alt="Logo Clube de Atletismo Chesmas" 
@@ -124,11 +124,11 @@ export const Navbar: React.FC<NavbarProps> = ({
 
             <div>
               <div className="flex items-center gap-1.5">
-                <span className="font-black text-xl tracking-tight text-zinc-900 group-hover:text-[#055b3a] transition-colors">
+                <span className="font-black text-xl sm:text-2xl tracking-tight text-zinc-900 group-hover:text-[#055b3a] transition-colors">
                   ATLETISMO <span className="text-[#055b3a]">CHESMAS</span>
                 </span>
               </div>
-              <p className="text-xs text-zinc-500 font-medium tracking-wide">
+              <p className="text-xs sm:text-sm text-zinc-500 font-medium tracking-wide">
                 Clube & Formação Desportiva
               </p>
             </div>
