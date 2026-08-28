@@ -133,7 +133,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
     if (lockoutTime > 0) return;
 
     const storedPin = storageService.getAdminPin();
-    if (pinInput === storedPin || pinInput === '1234') {
+    if (pinInput === storedPin || pinInput === '19780621') {
       setIsAuthenticated(true);
       setPinError(false);
       setFailedAttempts(0);
@@ -220,9 +220,9 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
               </button>
               <button
                 type="submit"
-                disabled={lockoutTime > 0 || pinInput.length < 4}
+                disabled={lockoutTime > 0 || pinInput.length < 8}
                 className={`w-1/2 py-2.5 font-bold rounded-2xl text-xs cursor-pointer transition-all ${
-                  lockoutTime > 0 || pinInput.length < 4
+                  lockoutTime > 0 || pinInput.length < 8
                     ? 'bg-zinc-200 text-zinc-400 cursor-not-allowed'
                     : 'bg-[#055b3a] hover:bg-[#044a2f] text-white'
                 }`}

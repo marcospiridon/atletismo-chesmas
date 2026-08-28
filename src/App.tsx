@@ -33,6 +33,34 @@ export default function App() {
   const [isAdminMode, setIsAdminMode] = useState<boolean>(false);
   const [selectedArticle, setSelectedArticle] = useState<NewsArticle | null>(null);
 
+  // Carregar dados assincronamente do Supabase na inicialização
+  useEffect(() => {
+    const loadSupabaseData = async () => {
+      try {
+        const info = await storageService.getClubInfoAsync();
+        if (info) setClubInfo(info);
+
+        const n = await storageService.getNewsAsync();
+        if (n && n.length > 0) setNews(n);
+
+        const t = await storageService.getTrainingsAsync();
+        if (t && t.length > 0) setTrainings(t);
+
+        const r = await storageService.getResultsAsync();
+        if (r && r.length > 0) setResults(r);
+
+        const g = await storageService.getGalleryAsync();
+        if (g && g.length > 0) setGallery(g);
+
+        const reg = await storageService.getRegistrationsAsync();
+        if (reg && reg.length > 0) setRegistrations(reg);
+      } catch (err) {
+        console.error('Erro ao carregar dados do Supabase:', err);
+      }
+    };
+    loadSupabaseData();
+  }, []);
+
   // Sync state helpers
   const handleUpdateClubInfo = (info: ClubInfo) => {
     storageService.saveClubInfo(info);

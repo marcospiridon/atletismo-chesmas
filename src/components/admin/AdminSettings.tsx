@@ -43,7 +43,7 @@ export const AdminSettings: React.FC<AdminSettingsProps> = ({
 
   const handleUpdatePin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (newPin.length >= 4) {
+    if (newPin.length >= 8) {
       storageService.setAdminPin(newPin);
       setAdminPin(newPin);
       setNewPin('');
@@ -241,14 +241,19 @@ export const AdminSettings: React.FC<AdminSettingsProps> = ({
         <form onSubmit={handleUpdatePin} className="flex flex-col sm:flex-row items-center gap-3">
           <input
             type="password"
-            placeholder="Novo PIN (min. 4 dígitos)"
+            placeholder="Novo PIN (min. 8 dígitos)"
             value={newPin}
             onChange={(e) => setNewPin(e.target.value)}
             className="w-full sm:w-64 px-3.5 py-2 bg-slate-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-600 focus:outline-none"
           />
           <button
             type="submit"
-            className="w-full sm:w-auto px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs font-bold transition-colors cursor-pointer"
+            disabled={newPin.length < 8}
+            className={`w-full sm:w-auto px-4 py-2 rounded-xl text-xs font-bold transition-colors cursor-pointer ${
+              newPin.length < 8
+                ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                : 'bg-slate-800 hover:bg-slate-900 text-white'
+            }`}
           >
             Atualizar PIN
           </button>
