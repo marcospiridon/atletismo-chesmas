@@ -403,6 +403,7 @@ export const storageService = {
 
   async getClubInfoAsync(): Promise<ClubInfo | null> {
     try {
+      if (!supabase) return null;
       const { data, error } = await supabase.from('club_info').select('*').limit(1);
       if (error) throw error;
       if (data && data.length > 0) {
@@ -421,6 +422,7 @@ export const storageService = {
 
   async saveClubInfoAsync(info: ClubInfo): Promise<void> {
     try {
+      if (!supabase) return;
       const pin = this.getAdminPin();
       const dbInfo = {
         ...mapClubInfoToDb(info),
@@ -443,6 +445,7 @@ export const storageService = {
 
   async getNewsAsync(): Promise<NewsArticle[]> {
     try {
+      if (!supabase) return [];
       const { data, error } = await supabase.from('news').select('*').order('publish_date', { ascending: false });
       if (error) throw error;
       return (data || []).map(mapNewsFromDb);
@@ -454,6 +457,7 @@ export const storageService = {
 
   async saveNewsAsync(news: NewsArticle[]): Promise<void> {
     try {
+      if (!supabase) return;
       // Limpar antigas notícias e inserir a nova lista
       const { error: delError } = await supabase.from('news').delete().neq('id', '');
       if (delError) throw delError;
@@ -470,6 +474,7 @@ export const storageService = {
 
   async getTrainingsAsync(): Promise<TrainingSession[]> {
     try {
+      if (!supabase) return [];
       const { data, error } = await supabase.from('trainings').select('*');
       if (error) throw error;
       return (data || []).map(mapTrainingFromDb);
@@ -481,6 +486,7 @@ export const storageService = {
 
   async saveTrainingsAsync(trainings: TrainingSession[]): Promise<void> {
     try {
+      if (!supabase) return;
       const { error: delError } = await supabase.from('trainings').delete().neq('id', '');
       if (delError) throw delError;
 
@@ -496,6 +502,7 @@ export const storageService = {
 
   async getResultsAsync(): Promise<RaceResult[]> {
     try {
+      if (!supabase) return [];
       const { data, error } = await supabase.from('results').select('*').order('date', { ascending: false });
       if (error) throw error;
       return (data || []).map(mapResultFromDb);
@@ -507,6 +514,7 @@ export const storageService = {
 
   async saveResultsAsync(results: RaceResult[]): Promise<void> {
     try {
+      if (!supabase) return;
       const { error: delError } = await supabase.from('results').delete().neq('id', '');
       if (delError) throw delError;
 
@@ -522,6 +530,7 @@ export const storageService = {
 
   async getGalleryAsync(): Promise<GalleryPhoto[]> {
     try {
+      if (!supabase) return [];
       const { data, error } = await supabase.from('gallery').select('*').order('date', { ascending: false });
       if (error) throw error;
       return (data || []).map(mapGalleryFromDb);
@@ -533,6 +542,7 @@ export const storageService = {
 
   async saveGalleryAsync(gallery: GalleryPhoto[]): Promise<void> {
     try {
+      if (!supabase) return;
       const { error: delError } = await supabase.from('gallery').delete().neq('id', '');
       if (delError) throw delError;
 
@@ -548,6 +558,7 @@ export const storageService = {
 
   async getRegistrationsAsync(): Promise<AthleteRegistration[]> {
     try {
+      if (!supabase) return [];
       const { data, error } = await supabase.from('registrations').select('*').order('submission_date', { ascending: false });
       if (error) throw error;
       return (data || []).map(mapRegistrationFromDb);
@@ -559,6 +570,7 @@ export const storageService = {
 
   async saveRegistrationsAsync(registrations: AthleteRegistration[]): Promise<void> {
     try {
+      if (!supabase) return;
       const { error: delError } = await supabase.from('registrations').delete().neq('id', '');
       if (delError) throw delError;
 
@@ -574,6 +586,7 @@ export const storageService = {
 
   async resetAllToDefaultAsync(): Promise<void> {
     try {
+      if (!supabase) return;
       // 1. Club Info
       await this.saveClubInfoAsync(initialClubInfo);
       // 2. News
