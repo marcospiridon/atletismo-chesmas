@@ -45,25 +45,6 @@ export interface TrainingSession {
   active: boolean;
 }
 
-export interface RaceResult {
-  id: string;
-  raceName: string;
-  location: string;
-  date: string; // YYYY-MM-DD
-  distance: string; // ex: 10 km, Meia Maratona, 5000m
-  category: string; // ex: Veteranos M40, Seniores F
-  athleteName: string;
-  bibNumber?: string;
-  officialTime: string; // ex: 00:34:12
-  pace?: string; // ex: 3:25 min/km
-  overallRank?: number;
-  categoryRank?: number;
-  podiumPosition?: 1 | 2 | 3 | null;
-  medalType?: 'gold' | 'silver' | 'bronze' | null;
-  notes?: string;
-  photoUrl?: string;
-}
-
 export interface GalleryPhoto {
   id: string;
   title: string;

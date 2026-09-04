@@ -4,7 +4,6 @@ import {
   ClubInfo, 
   GalleryPhoto, 
   NewsArticle, 
-  RaceResult, 
   TrainingSession 
 } from './types';
 import { storageService } from './services/storageService';
@@ -12,7 +11,6 @@ import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
 import { NewsSection } from './components/NewsSection';
 import { TrainingsSection } from './components/TrainingsSection';
-import { ResultsSection } from './components/ResultsSection';
 import { AboutSection } from './components/AboutSection';
 import { GallerySection } from './components/GallerySection';
 import { RegistrationForm } from './components/RegistrationForm';
@@ -25,7 +23,6 @@ export default function App() {
   const [clubInfo, setClubInfo] = useState<ClubInfo>(storageService.getClubInfo());
   const [news, setNews] = useState<NewsArticle[]>(storageService.getNews());
   const [trainings, setTrainings] = useState<TrainingSession[]>(storageService.getTrainings());
-  const [results, setResults] = useState<RaceResult[]>(storageService.getResults());
   const [gallery, setGallery] = useState<GalleryPhoto[]>(storageService.getGallery());
   const [registrations, setRegistrations] = useState<AthleteRegistration[]>(storageService.getRegistrations());
 
@@ -45,9 +42,6 @@ export default function App() {
 
         const t = await storageService.getTrainingsAsync();
         if (t && t.length > 0) setTrainings(t);
-
-        const r = await storageService.getResultsAsync();
-        if (r && r.length > 0) setResults(r);
 
         const g = await storageService.getGalleryAsync();
         if (g && g.length > 0) setGallery(g);
@@ -90,25 +84,6 @@ export default function App() {
     const updated = news.map(n => n.id === id ? { ...n, likes: n.likes + 1 } : n);
     storageService.saveNews(updated);
     setNews(updated);
-  };
-
-  const handleSaveResult = (result: RaceResult) => {
-    const existingIndex = results.findIndex(r => r.id === result.id);
-    let updated: RaceResult[];
-    if (existingIndex >= 0) {
-      updated = [...results];
-      updated[existingIndex] = result;
-    } else {
-      updated = [result, ...results];
-    }
-    storageService.saveResults(updated);
-    setResults(updated);
-  };
-
-  const handleDeleteResult = (id: string) => {
-    const updated = results.filter(r => r.id !== id);
-    storageService.saveResults(updated);
-    setResults(updated);
   };
 
   const handleSaveTraining = (training: TrainingSession) => {
@@ -171,7 +146,6 @@ export default function App() {
     setClubInfo(storageService.getClubInfo());
     setNews(storageService.getNews());
     setTrainings(storageService.getTrainings());
-    setResults(storageService.getResults());
     setGallery(storageService.getGallery());
     setRegistrations(storageService.getRegistrations());
   };
@@ -193,15 +167,12 @@ export default function App() {
         clubInfo={clubInfo}
         news={news}
         trainings={trainings}
-        results={results}
         gallery={gallery}
         registrations={registrations}
         onExitAdmin={() => setIsAdminMode(false)}
         onUpdateClubInfo={handleUpdateClubInfo}
         onSaveArticle={handleSaveArticle}
         onDeleteArticle={handleDeleteArticle}
-        onSaveResult={handleSaveResult}
-        onDeleteResult={handleDeleteResult}
         onSaveTraining={handleSaveTraining}
         onDeleteTraining={handleDeleteTraining}
         onSavePhoto={handleSavePhoto}
@@ -230,7 +201,6 @@ export default function App() {
       <Hero
         clubInfo={clubInfo}
         onNavigate={handleNavigate}
-        recentResults={results}
       />
 
       {/* Main Public Sections */}
@@ -245,11 +215,6 @@ export default function App() {
         <TrainingsSection
           trainings={trainings}
           onNavigateToRegister={() => handleNavigate('inscricao')}
-        />
-
-        {/* Results & Podium Section */}
-        <ResultsSection
-          results={results}
         />
 
         {/* About Club Section */}

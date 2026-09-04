@@ -1,12 +1,11 @@
-import { AthleteRegistration, ClubInfo, GalleryPhoto, NewsArticle, RaceResult, TrainingSession } from '../types';
-import { initialClubInfo, initialGallery, initialNews, initialRegistrations, initialResults, initialTrainings } from '../data/initialData';
+import { AthleteRegistration, ClubInfo, GalleryPhoto, NewsArticle, TrainingSession } from '../types';
+import { initialClubInfo, initialGallery, initialNews, initialRegistrations, initialTrainings } from '../data/initialData';
 import { supabase } from './supabaseClient';
 
 const KEYS = {
   CLUB_INFO: 'chesmas_club_info_v1',
   NEWS: 'chesmas_news_v1',
   TRAININGS: 'chesmas_trainings_v1',
-  RESULTS: 'chesmas_results_v1',
   GALLERY: 'chesmas_gallery_v1',
   REGISTRATIONS: 'chesmas_registrations_v1',
   ADMIN_PIN: 'chesmas_admin_pin_v1'
@@ -113,48 +112,6 @@ function mapTrainingToDb(item: TrainingSession) {
     focus: item.focus,
     notes: item.notes,
     active: item.active
-  };
-}
-
-function mapResultFromDb(row: any): RaceResult {
-  return {
-    id: row.id,
-    raceName: row.race_name,
-    location: row.location || '',
-    date: row.date || '',
-    distance: row.distance || '',
-    category: row.category || '',
-    athleteName: row.athlete_name,
-    bibNumber: row.bib_number || '',
-    officialTime: row.official_time,
-    pace: row.pace || '',
-    overallRank: row.overall_rank,
-    categoryRank: row.category_rank,
-    podiumPosition: row.podium_position,
-    medalType: row.medal_type,
-    notes: row.notes || '',
-    photoUrl: row.photo_url || ''
-  };
-}
-
-function mapResultToDb(item: RaceResult) {
-  return {
-    id: item.id,
-    race_name: item.raceName,
-    location: item.location,
-    date: item.date,
-    distance: item.distance,
-    category: item.category,
-    athlete_name: item.athleteName,
-    bib_number: item.bibNumber,
-    official_time: item.officialTime,
-    pace: item.pace,
-    overall_rank: item.overallRank,
-    category_rank: item.categoryRank,
-    podium_position: item.podiumPosition,
-    medal_type: item.medalType,
-    notes: item.notes,
-    photo_url: item.photoUrl
   };
 }
 
@@ -291,21 +248,6 @@ export const storageService = {
     this.saveTrainingsAsync(trainings).catch(console.error);
   },
 
-  getResults(): RaceResult[] {
-    try {
-      const data = localStorage.getItem(KEYS.RESULTS);
-      return data ? JSON.parse(data) : initialResults;
-    } catch {
-      return initialResults;
-    }
-  },
-
-  saveResults(results: RaceResult[]): void {
-    localStorage.setItem(KEYS.RESULTS, JSON.stringify(results));
-    // Sincroniza em background com Supabase
-    this.saveResultsAsync(results).catch(console.error);
-  },
-
   getGallery(): GalleryPhoto[] {
     try {
       const data = localStorage.getItem(KEYS.GALLERY);
@@ -360,7 +302,6 @@ export const storageService = {
     localStorage.setItem(KEYS.CLUB_INFO, JSON.stringify(initialClubInfo));
     localStorage.setItem(KEYS.NEWS, JSON.stringify(initialNews));
     localStorage.setItem(KEYS.TRAININGS, JSON.stringify(initialTrainings));
-    localStorage.setItem(KEYS.RESULTS, JSON.stringify(initialResults));
     localStorage.setItem(KEYS.GALLERY, JSON.stringify(initialGallery));
     localStorage.setItem(KEYS.REGISTRATIONS, JSON.stringify(initialRegistrations));
 
@@ -375,7 +316,6 @@ export const storageService = {
       clubInfo: this.getClubInfo(),
       news: this.getNews(),
       trainings: this.getTrainings(),
-      results: this.getResults(),
       gallery: this.getGallery(),
       registrations: this.getRegistrations()
     };
@@ -388,7 +328,6 @@ export const storageService = {
       if (parsed.clubInfo) this.saveClubInfo(parsed.clubInfo);
       if (parsed.news) this.saveNews(parsed.news);
       if (parsed.trainings) this.saveTrainings(parsed.trainings);
-      if (parsed.results) this.saveResults(parsed.results);
       if (parsed.gallery) this.saveGallery(parsed.gallery);
       if (parsed.registrations) this.saveRegistrations(parsed.registrations);
       return true;
@@ -500,34 +439,6 @@ export const storageService = {
     }
   },
 
-  async getResultsAsync(): Promise<RaceResult[]> {
-    try {
-      if (!supabase) return [];
-      const { data, error } = await supabase.from('results').select('*').order('date', { ascending: false });
-      if (error) throw error;
-      return (data || []).map(mapResultFromDb);
-    } catch (err) {
-      console.error('Erro getResultsAsync:', err);
-      return [];
-    }
-  },
-
-  async saveResultsAsync(results: RaceResult[]): Promise<void> {
-    try {
-      if (!supabase) return;
-      const { error: delError } = await supabase.from('results').delete().neq('id', '');
-      if (delError) throw delError;
-
-      if (results.length > 0) {
-        const rows = results.map(mapResultToDb);
-        const { error: insError } = await supabase.from('results').insert(rows);
-        if (insError) throw insError;
-      }
-    } catch (err) {
-      console.error('Erro saveResultsAsync:', err);
-    }
-  },
-
   async getGalleryAsync(): Promise<GalleryPhoto[]> {
     try {
       if (!supabase) return [];
@@ -593,11 +504,9 @@ export const storageService = {
       await this.saveNewsAsync(initialNews);
       // 3. Trainings
       await this.saveTrainingsAsync(initialTrainings);
-      // 4. Results
-      await this.saveResultsAsync(initialResults);
-      // 5. Gallery
+      // 4. Gallery
       await this.saveGalleryAsync(initialGallery);
-      // 6. Registrations
+      // 5. Registrations
       await this.saveRegistrationsAsync(initialRegistrations);
       
       console.log('Dados do Supabase repostos para o padrão com sucesso!');

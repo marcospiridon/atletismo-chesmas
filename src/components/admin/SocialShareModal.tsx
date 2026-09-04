@@ -10,23 +10,20 @@ import {
   Sparkles, 
   ExternalLink,
   Flame,
-  Award,
   Smartphone
 } from 'lucide-react';
-import { NewsArticle, RaceResult } from '../../types';
+import { NewsArticle } from '../../types';
 import { socialSharer } from '../../utils/socialSharer';
 
 interface SocialShareModalProps {
-  item: NewsArticle | RaceResult | null;
-  type: 'news' | 'result';
+  article: NewsArticle | null;
   onClose: () => void;
   facebookPageUrl?: string;
   instagramPageUrl?: string;
 }
 
 export const SocialShareModal: React.FC<SocialShareModalProps> = ({
-  item,
-  type,
+  article,
   onClose,
   facebookPageUrl = 'https://facebook.com/atletismochesmas',
   instagramPageUrl = 'https://instagram.com/atletismochesmas'
@@ -34,18 +31,10 @@ export const SocialShareModal: React.FC<SocialShareModalProps> = ({
   const [copiedCaption, setCopiedCaption] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
 
-  if (!item) return null;
-
-  const isNews = type === 'news';
-  const article = isNews ? (item as NewsArticle) : null;
-  const result = !isNews ? (item as RaceResult) : null;
+  if (!article) return null;
 
   const currentUrl = window.location.href;
-  const defaultCaption = isNews && article
-    ? socialSharer.formatNewsSocialCaption(article)
-    : result
-    ? socialSharer.formatResultSocialCaption(result)
-    : '';
+  const defaultCaption = socialSharer.formatNewsSocialCaption(article);
 
   const [caption, setCaption] = useState<string>(defaultCaption);
 
@@ -66,8 +55,7 @@ export const SocialShareModal: React.FC<SocialShareModalProps> = ({
   };
 
   const handleShareFacebook = () => {
-    const shareTitle = isNews ? article?.title : `Grande resultado do Chesmas no ${result?.raceName}!`;
-    window.open(socialSharer.getFacebookShareUrl(currentUrl, shareTitle), '_blank');
+    window.open(socialSharer.getFacebookShareUrl(currentUrl, article.title), '_blank');
   };
 
   const handleShareWhatsApp = () => {
@@ -116,9 +104,9 @@ export const SocialShareModal: React.FC<SocialShareModalProps> = ({
 
               <div className="bg-gradient-to-br from-emerald-950 via-emerald-900 to-green-950 rounded-2xl overflow-hidden shadow-xl border border-emerald-700 text-white p-5 relative flex flex-col justify-between min-h-[380px]">
                 {/* Background image tint */}
-                {((isNews && article?.coverImage) || (!isNews && result?.photoUrl)) && (
+                {article.coverImage && (
                   <img
-                    src={isNews ? article?.coverImage : result?.photoUrl}
+                    src={article.coverImage}
                     alt="Preview"
                     className="absolute inset-0 w-full h-full object-cover opacity-25"
                   />
@@ -135,38 +123,19 @@ export const SocialShareModal: React.FC<SocialShareModalProps> = ({
                     </span>
                   </div>
                   <span className="bg-white/20 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
-                    {isNews ? article?.category : result?.distance}
+                    {article.category}
                   </span>
                 </div>
 
                 <div className="relative z-10 my-auto py-6">
-                  {isNews ? (
-                    <div>
-                      <h4 className="text-xl font-black text-white leading-tight mb-2">
-                        {article?.title}
-                      </h4>
-                      <p className="text-xs text-emerald-100 line-clamp-3">
-                        {article?.summary}
-                      </p>
-                    </div>
-                  ) : (
-                    <div>
-                      <div className="inline-flex items-center gap-1.5 bg-amber-400 text-emerald-950 text-xs font-extrabold px-3 py-1 rounded-md mb-3">
-                        <Award className="w-4 h-4" />
-                        {result?.podiumPosition ? `${result.podiumPosition}º LUGAR` : 'PROVA OFICIAL'}
-                      </div>
-                      <h4 className="text-2xl font-black text-white mb-1">
-                        {result?.athleteName}
-                      </h4>
-                      <div className="text-sm font-bold text-lime-300">
-                        {result?.raceName}
-                      </div>
-                      <div className="mt-3 flex items-center gap-3 text-xs text-emerald-100 bg-black/40 p-2.5 rounded-xl border border-emerald-500/30">
-                        <span>⏱️ Tempo: <strong>{result?.officialTime}</strong></span>
-                        <span>🏅 Escalão: <strong>{result?.category}</strong></span>
-                      </div>
-                    </div>
-                  )}
+                  <div>
+                    <h4 className="text-xl font-black text-white leading-tight mb-2">
+                      {article.title}
+                    </h4>
+                    <p className="text-xs text-emerald-100 line-clamp-3">
+                      {article.summary}
+                    </p>
+                  </div>
                 </div>
 
                 <div className="relative z-10 pt-3 border-t border-emerald-800 flex items-center justify-between text-[11px] text-emerald-200">

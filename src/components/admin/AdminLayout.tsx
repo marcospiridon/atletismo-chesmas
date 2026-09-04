@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { 
   LayoutDashboard, 
   Newspaper, 
-  Trophy, 
   Calendar, 
   Image as ImageIcon, 
   UserPlus, 
@@ -20,13 +19,11 @@ import {
   ClubInfo, 
   GalleryPhoto, 
   NewsArticle, 
-  RaceResult, 
   TrainingSession 
 } from '../../types';
 import { storageService } from '../../services/storageService';
 import { AdminDashboard } from './AdminDashboard';
 import { AdminNews } from './AdminNews';
-import { AdminResults } from './AdminResults';
 import { AdminTrainings } from './AdminTrainings';
 import { AdminGallery } from './AdminGallery';
 import { AdminRegistrations } from './AdminRegistrations';
@@ -37,15 +34,12 @@ interface AdminLayoutProps {
   clubInfo: ClubInfo;
   news: NewsArticle[];
   trainings: TrainingSession[];
-  results: RaceResult[];
   gallery: GalleryPhoto[];
   registrations: AthleteRegistration[];
   onExitAdmin: () => void;
   onUpdateClubInfo: (info: ClubInfo) => void;
   onSaveArticle: (article: NewsArticle) => void;
   onDeleteArticle: (id: string) => void;
-  onSaveResult: (result: RaceResult) => void;
-  onDeleteResult: (id: string) => void;
   onSaveTraining: (training: TrainingSession) => void;
   onDeleteTraining: (id: string) => void;
   onSavePhoto: (photo: GalleryPhoto) => void;
@@ -59,15 +53,12 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
   clubInfo,
   news,
   trainings,
-  results,
   gallery,
   registrations,
   onExitAdmin,
   onUpdateClubInfo,
   onSaveArticle,
   onDeleteArticle,
-  onSaveResult,
-  onDeleteResult,
   onSaveTraining,
   onDeleteTraining,
   onSavePhoto,
@@ -113,19 +104,12 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
   }, [lockoutTime]);
 
   // Social share modal state
-  const [socialShareItem, setSocialShareItem] = useState<NewsArticle | RaceResult | null>(null);
-  const [socialShareType, setSocialShareType] = useState<'news' | 'result'>('news');
+  const [socialShareArticle, setSocialShareArticle] = useState<NewsArticle | null>(null);
 
   const pendingCount = registrations.filter(r => r.status === 'Pendente').length;
 
   const handleOpenSocialNews = (article: NewsArticle) => {
-    setSocialShareItem(article);
-    setSocialShareType('news');
-  };
-
-  const handleOpenSocialResult = (res: RaceResult) => {
-    setSocialShareItem(res);
-    setSocialShareType('result');
+    setSocialShareArticle(article);
   };
 
   const handlePinSubmit = (e: React.FormEvent) => {
@@ -158,7 +142,6 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
   const tabs = [
     { id: 'dashboard', label: 'Painel Geral', icon: LayoutDashboard },
     { id: 'noticias', label: 'Notícias & Blog', icon: Newspaper, count: news.length },
-    { id: 'resultados', label: 'Resultados & Pódios', icon: Trophy, count: results.length },
     { id: 'treinos', label: 'Horários de Treinos', icon: Calendar, count: trainings.length },
     { id: 'galeria', label: 'Galeria de Fotos', icon: ImageIcon, count: gallery.length },
     { id: 'inscricoes', label: 'Inscrições Recebidas', icon: UserPlus, badge: pendingCount > 0 ? pendingCount : null },
@@ -320,12 +303,10 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
         {activeTab === 'dashboard' && (
           <AdminDashboard
             news={news}
-            results={results}
             trainings={trainings}
             registrations={registrations}
             onNavigateTab={(tab) => setActiveTab(tab)}
             onOpenSocialShareNews={handleOpenSocialNews}
-            onOpenSocialShareResult={handleOpenSocialResult}
           />
         )}
 
@@ -335,15 +316,6 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
             onSaveArticle={onSaveArticle}
             onDeleteArticle={onDeleteArticle}
             onOpenSocialShare={handleOpenSocialNews}
-          />
-        )}
-
-        {activeTab === 'resultados' && (
-          <AdminResults
-            results={results}
-            onSaveResult={onSaveResult}
-            onDeleteResult={onDeleteResult}
-            onOpenSocialShare={handleOpenSocialResult}
           />
         )}
 
@@ -381,11 +353,10 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
       </div>
 
       {/* Social Sharer Assistant Modal */}
-      {socialShareItem && (
+      {socialShareArticle && (
         <SocialShareModal
-          item={socialShareItem}
-          type={socialShareType}
-          onClose={() => setSocialShareItem(null)}
+          article={socialShareArticle}
+          onClose={() => setSocialShareArticle(null)}
           facebookPageUrl={clubInfo.socialMedia.facebook}
           instagramPageUrl={clubInfo.socialMedia.instagram}
         />

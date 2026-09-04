@@ -1,4 +1,4 @@
-import { NewsArticle, RaceResult } from '../types';
+import { NewsArticle } from '../types';
 
 export const socialSharer = {
   // Generate Facebook share link
@@ -49,28 +49,6 @@ ${article.content.slice(0, 280)}${article.content.length > 280 ? '...' : ''}
 Junta-te à nossa equipa e vem correr connosco! 💪✨
 
 ${tags.join(' ')}`;
-  },
-
-  // Format a high-engagement Instagram / Facebook caption for Race Results
-  formatResultSocialCaption(result: RaceResult, clubName = 'Clube de Atletismo Chesmas'): string {
-    const medalEmoji = result.medalType === 'gold' ? '🥇 OURO' : result.medalType === 'silver' ? '🥈 PRATA' : result.medalType === 'bronze' ? '🥉 BRONZE' : '⚡ GRANDE PRESTAÇÃO';
-    
-    return `🏆 ${medalEmoji} PARA O CHESMAS! 🏆
-
-Grande prestação do nosso atleta ${result.athleteName} no ${result.raceName} (${result.location})!
-
-📊 Detalhes da Prova:
-📍 Distância: ${result.distance}
-⏱️ Tempo Oficial: ${result.officialTime}
-⚡ Ritmo Médio: ${result.pace || 'N/D'}
-🏅 Classificação no Escalão: ${result.categoryRank ? `${result.categoryRank}º Lugar (${result.category})` : result.category}
-${result.overallRank ? `🏁 Classificação Geral: ${result.overallRank}º Lugar` : ''}
-
-${result.notes ? `💬 "${result.notes}"` : ''}
-
-Orgulho nestas cores e na garra dos nossos corredores! Força Chesmas! 💚💪
-
-#atletismochesmas #chesmas #podio #atletismoportugues #running #superacao #correr`;
   },
 
   // Copy to clipboard with success callback

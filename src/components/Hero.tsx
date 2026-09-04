@@ -1,38 +1,16 @@
 import React from 'react';
-import { Trophy, Calendar, UserPlus, ArrowRight, Award, Flame, ChevronRight, Zap } from 'lucide-react';
-import { ClubInfo, RaceResult } from '../types';
+import { Trophy, Calendar, UserPlus, ArrowRight, Award, Flame, Zap } from 'lucide-react';
+import { ClubInfo } from '../types';
 
 interface HeroProps {
   clubInfo: ClubInfo;
   onNavigate: (sectionId: string) => void;
-  recentResults: RaceResult[];
 }
 
-export const Hero: React.FC<HeroProps> = ({ clubInfo, onNavigate, recentResults }) => {
-  const topResult = recentResults.find(r => r.podiumPosition === 1) || recentResults[0];
-
+export const Hero: React.FC<HeroProps> = ({ clubInfo, onNavigate }) => {
   return (
     <div className="py-8 sm:py-12 bg-[#f0f4f2]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Ticker for latest achievements */}
-        {topResult && (
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-emerald-900/10 text-zinc-800 text-xs sm:text-sm mb-6 shadow-xs">
-            <span className="flex h-2.5 w-2.5 relative">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#055b3a]"></span>
-            </span>
-            <span className="font-bold text-[#055b3a]">Última Vitória:</span>
-            <span className="truncate max-w-[200px] sm:max-w-md text-zinc-600 font-medium">
-              {topResult.athleteName} ({topResult.raceName} • {topResult.officialTime})
-            </span>
-            <button 
-              onClick={() => onNavigate('resultados')}
-              className="text-[#055b3a] hover:text-[#044a2f] font-extrabold inline-flex items-center ml-1 cursor-pointer"
-            >
-              Ver <ChevronRight className="w-3.5 h-3.5" />
-            </button>
-          </div>
-        )}
 
         {/* Bento Grid Architecture */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">

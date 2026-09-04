@@ -8,7 +8,6 @@ import {
   initialClubInfo, 
   initialNews, 
   initialTrainings, 
-  initialResults, 
   initialGallery, 
   initialRegistrations 
 } from '../data/initialData';
@@ -101,36 +100,7 @@ async function runMigration() {
     else console.log(`✓ ${trainingsToInsert.length} treinos migrados com sucesso!`);
   }
 
-  // 4. Migrar Results
-  console.log('\n--- Migrando Results ---');
-  const { error: resultsDeleteError } = await supabase.from('results').delete().neq('id', '');
-  if (resultsDeleteError) {
-    console.error('Erro ao limpar results:', resultsDeleteError.message);
-  } else {
-    const resultsToInsert = initialResults.map(r => ({
-      id: r.id,
-      race_name: r.raceName,
-      location: r.location,
-      date: r.date,
-      distance: r.distance,
-      category: r.category,
-      athlete_name: r.athleteName,
-      bib_number: r.bibNumber,
-      official_time: r.officialTime,
-      pace: r.pace,
-      overall_rank: r.overallRank,
-      category_rank: r.categoryRank,
-      podium_position: r.podiumPosition,
-      medal_type: r.medalType,
-      notes: r.notes,
-      photo_url: r.photoUrl
-    }));
-    const { error: resultsInsertError } = await supabase.from('results').insert(resultsToInsert);
-    if (resultsInsertError) console.error('Erro ao inserir results:', resultsInsertError.message);
-    else console.log(`✓ ${resultsToInsert.length} resultados migrados com sucesso!`);
-  }
-
-  // 5. Migrar Gallery
+  // 4. Migrar Gallery
   console.log('\n--- Migrando Gallery ---');
   const { error: galleryDeleteError } = await supabase.from('gallery').delete().neq('id', '');
   if (galleryDeleteError) {
@@ -150,7 +120,7 @@ async function runMigration() {
     else console.log(`✓ ${galleryToInsert.length} fotos da galeria migradas com sucesso!`);
   }
 
-  // 6. Migrar Registrations
+  // 5. Migrar Registrations
   console.log('\n--- Migrando Registrations ---');
   const { error: registrationsDeleteError } = await supabase.from('registrations').delete().neq('id', '');
   if (registrationsDeleteError) {

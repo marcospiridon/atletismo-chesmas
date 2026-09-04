@@ -1,42 +1,33 @@
 import React from 'react';
 import { 
   Newspaper, 
-  Trophy, 
   Calendar, 
-  Image as ImageIcon, 
   UserPlus, 
   Flame, 
   Share2, 
   TrendingUp, 
   Sparkles, 
-  Users,
-  Award
+  Users
 } from 'lucide-react';
-import { AthleteRegistration, NewsArticle, RaceResult, TrainingSession } from '../../types';
+import { AthleteRegistration, NewsArticle, TrainingSession } from '../../types';
 
 interface AdminDashboardProps {
   news: NewsArticle[];
-  results: RaceResult[];
   trainings: TrainingSession[];
   registrations: AthleteRegistration[];
   onNavigateTab: (tab: string) => void;
   onOpenSocialShareNews: (article: NewsArticle) => void;
-  onOpenSocialShareResult: (result: RaceResult) => void;
 }
 
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   news,
-  results,
   trainings,
   registrations,
   onNavigateTab,
-  onOpenSocialShareNews,
-  onOpenSocialShareResult
+  onOpenSocialShareNews
 }) => {
   const pendingRegistrations = registrations.filter(r => r.status === 'Pendente');
-  const podiumResults = results.filter(r => r.podiumPosition !== null && r.podiumPosition !== undefined);
   const latestArticle = news[0];
-  const latestPodium = podiumResults[0];
 
   const stats = [
     {
@@ -57,15 +48,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       color: 'text-emerald-700',
       bg: 'bg-emerald-50',
       tab: 'noticias'
-    },
-    {
-      label: 'Resultados & Provas',
-      value: results.length,
-      sublabel: `${podiumResults.length} Pódios Oficiais`,
-      icon: Trophy,
-      color: 'text-amber-500',
-      bg: 'bg-amber-50/80',
-      tab: 'resultados'
     },
     {
       label: 'Treinos Ativos',
@@ -91,13 +73,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             Gestão Rápida, Simples e Partilha Social
           </h2>
           <p className="text-emerald-200 text-xs sm:text-sm leading-relaxed">
-            Atualiza os resultados dos atletas, horários de treinos, fotos da galeria e publica diretamente no Facebook e Instagram.
+            Gere notícias, horários de treinos, fotos da galeria e publica diretamente no Facebook e Instagram.
           </p>
         </div>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
         {stats.map((stat, i) => {
           const Icon = stat.icon;
           return (
@@ -143,12 +125,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
           {/* Latest Article Share Card */}
           {latestArticle && (
-            <div className="bg-slate-50 rounded-2xl p-5 border border-gray-200 flex flex-col justify-between">
-              <div>
-                <div className="flex items-center justify-between text-xs text-gray-500 mb-2">
+            <div className="bg-slate-50 rounded-2xl p-5 border border-gray-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="max-w-2xl">
+                <div className="flex items-center gap-2 text-xs text-gray-500 mb-2">
                   <span className="bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-md">
                     Última Notícia
                   </span>
@@ -157,45 +139,17 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 <h4 className="font-extrabold text-base text-gray-900 line-clamp-1 mb-1">
                   {latestArticle.title}
                 </h4>
-                <p className="text-xs text-gray-600 line-clamp-2 mb-4">
+                <p className="text-xs text-gray-600 line-clamp-2">
                   {latestArticle.summary}
                 </p>
               </div>
 
               <button
                 onClick={() => onOpenSocialShareNews(latestArticle)}
-                className="w-full inline-flex items-center justify-center gap-2 bg-emerald-700 hover:bg-emerald-800 text-white py-2.5 px-4 rounded-xl text-xs font-bold shadow-xs transition-colors cursor-pointer"
+                className="inline-flex items-center justify-center gap-2 bg-emerald-700 hover:bg-emerald-800 text-white py-2.5 px-5 rounded-xl text-xs font-bold shadow-xs transition-colors cursor-pointer shrink-0"
               >
                 <Share2 className="w-4 h-4" />
                 <span>Gerar Post / Partilhar Notícia</span>
-              </button>
-            </div>
-          )}
-
-          {/* Latest Podium Share Card */}
-          {latestPodium && (
-            <div className="bg-amber-50/50 rounded-2xl p-5 border border-amber-200 flex flex-col justify-between">
-              <div>
-                <div className="flex items-center justify-between text-xs text-amber-900 mb-2">
-                  <span className="bg-amber-400 text-emerald-950 font-black px-2 py-0.5 rounded-md uppercase">
-                    Pódio Destaque 🏆
-                  </span>
-                  <span>{latestPodium.date}</span>
-                </div>
-                <h4 className="font-extrabold text-base text-gray-900 line-clamp-1 mb-1">
-                  {latestPodium.athleteName} — {latestPodium.raceName}
-                </h4>
-                <p className="text-xs text-gray-600 mb-4">
-                  Tempo: <strong>{latestPodium.officialTime}</strong> ({latestPodium.distance} • {latestPodium.category})
-                </p>
-              </div>
-
-              <button
-                onClick={() => onOpenSocialShareResult(latestPodium)}
-                className="w-full inline-flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-600 text-white py-2.5 px-4 rounded-xl text-xs font-bold shadow-xs transition-colors cursor-pointer"
-              >
-                <Award className="w-4 h-4" />
-                <span>Gerar Post de Celebração de Pódio</span>
               </button>
             </div>
           )}

@@ -56,28 +56,7 @@ create table if not exists trainings (
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
--- 4. Tabela Results (Resultados de Corridas)
-create table if not exists results (
-  id text primary key,
-  race_name text not null,
-  location text,
-  date text,
-  distance text,
-  category text,
-  athlete_name text not null,
-  bib_number text,
-  official_time text not null,
-  pace text,
-  overall_rank integer,
-  category_rank integer,
-  podium_position integer,
-  medal_type text,
-  notes text,
-  photo_url text,
-  created_at timestamp with time zone default timezone('utc'::text, now()) not null
-);
-
--- 5. Tabela Gallery (Galeria de Fotos)
+-- 4. Tabela Gallery (Galeria de Fotos)
 create table if not exists gallery (
   id text primary key,
   title text not null,
@@ -89,7 +68,7 @@ create table if not exists gallery (
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
--- 6. Tabela Registrations (Fichas de Inscrição dos Atletas)
+-- 5. Tabela Registrations (Fichas de Inscrição dos Atletas)
 create table if not exists registrations (
   id text primary key,
   registration_number text not null unique,

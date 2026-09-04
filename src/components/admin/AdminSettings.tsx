@@ -289,7 +289,7 @@ export const AdminSettings: React.FC<AdminSettingsProps> = ({
 
           <button
             onClick={() => {
-              if (window.confirm('Tem a certeza que deseja repor todos os dados iniciais do clube? Esta ação irá restaurar as notícias, treinos e resultados de demonstração.')) {
+              if (window.confirm('Tem a certeza que deseja repor todos os dados iniciais do clube? Esta ação irá restaurar as notícias, treinos e fotos de demonstração.')) {
                 onResetDefaults();
                 alert('Dados repostos com sucesso!');
               }

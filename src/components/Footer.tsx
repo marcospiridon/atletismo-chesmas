@@ -103,11 +103,6 @@ export const Footer: React.FC<FooterProps> = ({ clubInfo, onNavigate, onOpenAdmi
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigate('resultados')} className="hover:text-lime-300 transition-colors cursor-pointer">
-                  Resultados & Pódios
-                </button>
-              </li>
-              <li>
                 <button onClick={() => onNavigate('galeria')} className="hover:text-lime-300 transition-colors cursor-pointer">
                   Galeria de Fotos
                 </button>

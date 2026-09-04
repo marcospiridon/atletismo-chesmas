@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { 
   Menu, 
   X, 
-  Trophy, 
   Calendar, 
   Newspaper, 
   Users, 
@@ -38,7 +37,6 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'sobre', label: 'O Clube' },
     { id: 'noticias', label: 'Notícias & Blog', icon: Newspaper },
     { id: 'treinos', label: 'Treinos & Calendário', icon: Calendar },
-    { id: 'resultados', label: 'Resultados & Pódios', icon: Trophy },
     { id: 'galeria', label: 'Fotos', icon: ImageIcon },
     { id: 'inscricao', label: 'Inscrição', icon: UserPlus, highlight: true },
     { id: 'contactos', label: 'Contactos', icon: Phone }
